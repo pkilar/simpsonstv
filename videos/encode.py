@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import os
 
 newFiles = []
@@ -21,7 +23,7 @@ def isVideo(videofile):
 
 newFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(directory) for f in filenames if isVideo(f)]
 
-for filepath in newFiles:
+for filepath in sorted(newFiles):
 	video = os.path.basename(filepath)
 	videoName = os.path.splitext(video)[0]
 	newFile = '%s.mp4' % videoName
@@ -29,6 +31,6 @@ for filepath in newFiles:
 	o = os.path.join(destinationDirectory, newFile)
 	if os.path.isfile(o):
 		continue
-	encodeCommand = 'ffmpeg -i "%s" -vf scale=-2:480 -c:v libx264 -profile:v baseline -level 3.0 -preset fast -crf 23 -pix_fmt yuv420p "%s"' % (i, o)
+	encodeCommand = 'ffmpeg -hide_banner -y -i "%s" -vf "scale=640:-2" -c:v libx264 -profile:v baseline -level 3.0 -preset fast -crf 23 -pix_fmt yuv420p -tune animation -c:a aac -b:a 128k -ac 1 -sn "%s"' % (i, o)
 	print('Encoding %s' % newFile)
 	encode = os.popen(encodeCommand).read()
